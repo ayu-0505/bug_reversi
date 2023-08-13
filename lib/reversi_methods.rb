@@ -53,7 +53,7 @@ module ReversiMethods
     copied_board[pos.row][pos.col] = stone_color
 
     turn_succeed = false
-    # 該当ポジションの左上から１回転分、石を確認する
+    # 該当ポジションの左上から１回転分、石をターンできるか確認する
     Position::DIRECTIONS.each do |direction|
       next_pos = pos.next_position(direction)
       turn_succeed = true if turn(copied_board, next_pos, stone_color, direction)
@@ -80,18 +80,19 @@ module ReversiMethods
   end
 
   def finished?(board)
-    !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE)
+    !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE) #
   end
 
-  def placeable?(board, attack_stone_color)
+  def placeable?(board, attack_stone_color) #置けるtrue 置けない
+    #全てのセルをチェックする
     board.each_with_index do |cols, row|
       cols.each_with_index do |cell, col|
-        next unless cell == BLANK_CELL # - でない時は次の回に進む（- の時は処理続行）
-
-        position = Position.new(row, col)
+        next unless cell == BLANK_CELL # セルが石の時は次の繰り返しに進む（- の時は石が置けるので処理続行）
+        position = Position.new(row, col) #該当セルが石を置けたらtrueを返す 
         return true if put_stone(board, position.to_cell_ref, attack_stone_color, dry_run: true)
       end
     end
+    false
   end
 
   def count_stone(board, stone_color)
