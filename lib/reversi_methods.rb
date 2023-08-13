@@ -18,9 +18,12 @@ module ReversiMethods
   end
 
   def output(board)
+    # 行アルファベット出力
     puts "  #{Position::COL.join(' ')}"
     board.each_with_index do |row, i|
+      # 横列数字出力
       print Position::ROW[i]
+      # 空白ハイフン白黒石の配置
       row.each do |cell|
         case cell
         when WHITE_STONE then print ' ○'
@@ -42,12 +45,12 @@ module ReversiMethods
 
   def put_stone(board, cell_ref, stone_color, dry_run: false)
     pos = Position.new(cell_ref)
-    raise '無効なポジションです' if pos.invalid?
-    raise 'すでに石が置かれています' unless pos.stone_color(board) == BLANK_CELL
+    raise '無効なポジションです' if pos.invalid? #該当セルがnilになる場合の処理
+    raise 'すでに石が置かれています' unless pos.stone_color(board) == BLANK_CELL #該当セルが-以外のエラー表示
 
     # コピーした盤面にて石の配置を試みて、成功すれば反映する
     copied_board = Marshal.load(Marshal.dump(board))
-    copied_board[pos.col][pos.row] = stone_color
+    copied_board[pos.row][pos.col] = stone_color
 
     turn_succeed = false
     Position::DIRECTIONS.each do |direction|
@@ -80,7 +83,7 @@ module ReversiMethods
   def placeable?(board, attack_stone_color)
     board.each_with_index do |cols, row|
       cols.each_with_index do |cell, col|
-        next unless cell == BLANK_CELL
+        next unless cell == BLANK_CELL # - でない時は次の回に進む（- の時は処理続行）
 
         position = Position.new(row, col)
         return true if put_stone(board, position.to_cell_ref, attack_stone_color, dry_run: true)
