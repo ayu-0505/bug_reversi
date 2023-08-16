@@ -15,7 +15,6 @@ class Reversi
   def run # rubocop:disable Metrics/MethodLength
     loop do
       output(@board)
-
       if finished?(@board)
         puts '試合終了'
         puts "白○:#{count_stone(@board, WHITE_STONE)}"
@@ -23,7 +22,7 @@ class Reversi
         break
       end
 
-      unless placeable?(@board, @current_stone)
+      unless placeable?(@board, @current_stone) #石が置けない時は以下の処理
         puts '詰みのためターンを切り替えます'
         toggle_stone
         next
@@ -31,6 +30,7 @@ class Reversi
 
       print "command? (#{@current_stone == WHITE_STONE ? '白○' : '黒●'}) > "
       command = gets.chomp
+      # commandが終了ならbreak if
       break if QUIT_COMMANDS.include?(command)
 
       begin

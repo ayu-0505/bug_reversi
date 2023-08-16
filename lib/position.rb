@@ -21,8 +21,8 @@ class Position
   def initialize(row_or_cell_ref, col = nil)
     if col
       # Position.new(1, 5) のような呼び出し
-      @row = row_or_cell_ref
-      @col = col
+      @row = row_or_cell_ref # 列（左の数字）
+      @col = col # 行（上の英数字）
     else
       # Position.new('f7')のような呼び出し
       @row = ROW.index(row_or_cell_ref[1])
@@ -34,20 +34,20 @@ class Position
     row.nil? || col.nil?
   end
 
-  def out_of_board?
+  def out_of_board? # 盤面外のポジションなら真
     !((0..7).cover?(row) && (0..7).cover?(col))
   end
 
   def stone_color(board)
-    return nil if out_of_board?
+    return nil if out_of_board? # 盤面外ならnilを返す
 
     board[row][col]
   end
 
   def to_cell_ref
-    return '盤面外' if out_of_board?
+    return '盤面外' if out_of_board? # 盤面外なら戻り値を盤面外に
 
-    "#{COL[col]}#{ROW[row]}"
+    "#{COL[col]}#{ROW[row]}" #数値表示をa1のような表記に変更
   end
 
   def next_position(direction)
