@@ -18,12 +18,9 @@ module ReversiMethods
   end
 
   def output(board)
-    # 行アルファベット出力
     puts "  #{Position::COL.join(' ')}"
     board.each_with_index do |row, i|
-      # 横列数字出力
       print Position::ROW[i]
-      # 空白ハイフン白黒石の配置
       row.each do |cell|
         case cell
         when WHITE_STONE then print ' ○'
@@ -45,15 +42,14 @@ module ReversiMethods
 
   def put_stone(board, cell_ref, stone_color, dry_run: false)
     pos = Position.new(cell_ref)
-    raise '無効なポジションです' if pos.invalid? #該当セルがnilになる場合の処理
-    raise 'すでに石が置かれています' unless pos.stone_color(board) == BLANK_CELL #該当セルが-以外のエラー表示
+    raise '無効なポジションです' if pos.invalid?
+    raise 'すでに石が置かれています' unless pos.stone_color(board) == BLANK_CELL
 
     # コピーした盤面にて石の配置を試みて、成功すれば反映する
     copied_board = Marshal.load(Marshal.dump(board))
     copied_board[pos.row][pos.col] = stone_color
 
     turn_succeed = false
-    # 該当ポジションの左上から１回転分、石をターンできるか確認する
     Position::DIRECTIONS.each do |direction|
       next_pos = pos.next_position(direction)
       turn_succeed = true if turn(copied_board, next_pos, stone_color, direction)
@@ -65,12 +61,11 @@ module ReversiMethods
   end
 
   def turn(board, target_pos, attack_stone_color, direction)
-    return false if target_pos.out_of_board? # 参照先が盤面外ならfalseでリターン
+    return false if target_pos.out_of_board?
     return false if target_pos.stone_color(board) == BLANK_CELL
-    return false if target_pos.stone_color(board) == attack_stone_color #参照先が攻撃と同じ色ならfalseでリターン
+    return false if target_pos.stone_color(board) == attack_stone_color
 
-    next_pos = target_pos.next_position(direction) #参照先のさらに先
-    # もし　参照先のさらに先が攻撃と同色なら　または　そのさらに参照先が同色なら
+    next_pos = target_pos.next_position(direction)
     if (next_pos.stone_color(board) == attack_stone_color) || turn(board, next_pos, attack_stone_color, direction)
       board[target_pos.row][target_pos.col] = attack_stone_color
       true
@@ -83,12 +78,11 @@ module ReversiMethods
     !placeable?(board, WHITE_STONE) && !placeable?(board, BLACK_STONE) #
   end
 
-  def placeable?(board, attack_stone_color) #置けるtrue 置けない
-    #全てのセルをチェックする
+  def placeable?(board, attack_stone_color)
     board.each_with_index do |cols, row|
       cols.each_with_index do |cell, col|
-        next unless cell == BLANK_CELL # セルが石の時は次の繰り返しに進む（- の時は石が置けるので処理続行）
-        position = Position.new(row, col) #該当セルが石を置けたらtrueを返す 
+        next unless cell == BLANK_CELL
+        position = Position.new(row, col)
         return true if put_stone(board, position.to_cell_ref, attack_stone_color, dry_run: true)
       end
     end

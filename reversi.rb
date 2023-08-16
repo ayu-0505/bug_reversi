@@ -22,7 +22,7 @@ class Reversi
         break
       end
 
-      unless placeable?(@board, @current_stone) #石が置けない時は以下の処理
+      unless placeable?(@board, @current_stone)
         puts '詰みのためターンを切り替えます'
         toggle_stone
         next
@@ -30,7 +30,6 @@ class Reversi
 
       print "command? (#{@current_stone == WHITE_STONE ? '白○' : '黒●'}) > "
       command = gets.chomp
-      # commandが終了ならbreak if
       break if QUIT_COMMANDS.include?(command)
 
       begin
