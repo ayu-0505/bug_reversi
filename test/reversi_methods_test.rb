@@ -6,6 +6,7 @@ require_relative '../lib/reversi_methods'
 class ReversiMethodsTest < Minitest::Test
   include ReversiMethods
 
+   #テスト用のボード内容を転写するメソッド
   def build_board(board_text)
     board = build_initial_board
     board_text.split("\n").each_with_index do |row, i|
@@ -70,8 +71,8 @@ class ReversiMethodsTest < Minitest::Test
       --B-----
     BOARD
     board = build_board(initial_data)
-    refute put_stone(board, 'b1', BLACK_STONE)
-    assert_equal build_board(initial_data), board
+    refute put_stone(board, 'b1', BLACK_STONE)  #b1に黒石が置けない(偽)ならパスできる(白をひっくり返せないので置けないはず)
+    assert_equal build_board(initial_data), board #テスト配置と、もう一度テスト配置を代入したものが同じかどうか
   end
 
   def test_turn
@@ -85,8 +86,8 @@ class ReversiMethodsTest < Minitest::Test
       --------
       --------
     BOARD
-    assert put_stone(board, 'b4', BLACK_STONE)
-    assert_equal build_board(<<~BOARD), board
+    assert put_stone(board, 'b4', BLACK_STONE) #b4に黒石が置ける(真)ならパスできる
+    assert_equal build_board(<<~BOARD), board #b4に置いたことでf3,c4の白がひっくり返るはず
       --------
       ---B----
       --BB----
@@ -104,7 +105,7 @@ class ReversiMethodsTest < Minitest::Test
   end
 
   def test_finished_of_full_board
-    assert finished?(build_board(<<~BOARD)) # 全て埋まった盤面
+    assert finished?(build_board(<<~BOARD)) # 全て埋まった盤面　#これを読み込んだfinishメソッドが真ならパス
       WWWWWWWW
       WBBWWBWB
       WBBBBWBB
